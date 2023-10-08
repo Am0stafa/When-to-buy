@@ -72,6 +72,13 @@ export async function getProductById(productId: string){
   }
 }
 
+/**
+ * Retrieves all products from the database.
+ * @returns {Promise<Array>} An array of all products retrieved from the database.
+ * @example
+ * const products = await getAllProducts();
+ * console.log(products);
+ */
 export async function getAllProducts() {
   try {
     connectToDB();

@@ -1,12 +1,12 @@
 import Modal from "@/components/Modal";
 import PriceInfoCard from "@/components/PriceInfoCard";
 import ProductCard from "@/components/ProductCard";
-import { getProductById, getSimilarProducts } from "@/lib/actions"
 import { formatNumber } from "@/lib/utils";
-import { Product } from "@/types";
+import { getProductById, getSimilarProducts } from "@/lib/actions"
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Product } from "@/types";
 
 type Props = {
   params: { id: string }
