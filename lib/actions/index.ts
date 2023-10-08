@@ -8,26 +8,29 @@ import { getAveragePrice, getHighestPrice, getLowestPrice } from "../utils";
 import { User } from "@/types";
 import { generateEmailBody, sendEmail } from "../nodemailer";
 
-export async function scrapeAndStoreProduct(productUrl: string) {
+/**
+  * Scrapes product information from an Amazon product page and stores it in a MongoDB database.
+  * Updates the price history and calculates the lowest, highest, and average prices for the product.
+  * 
+  * @param {string} productUrl - The URL of the Amazon product page to scrape.
+  * @returns {void}
+  * @throws {Error} If failed to create/update product.
+*/
+export async function scrapeAndStoreProduct(productUrl: string){
   if(!productUrl) return;
 
   try {
     connectToDB();
-
     const scrapedProduct = await scrapeAmazonProduct(productUrl);
-
     if(!scrapedProduct) return;
-
     let product = scrapedProduct;
-
     const existingProduct = await Product.findOne({ url: scrapedProduct.url });
-
+    
     if(existingProduct) {
       const updatedPriceHistory: any = [
         ...existingProduct.priceHistory,
         { price: scrapedProduct.currentPrice }
-      ]
-
+      ];
       product = {
         ...scrapedProduct,
         priceHistory: updatedPriceHistory,
