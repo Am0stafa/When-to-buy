@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache";
-import Product from "../models/product.model";
+import Product from "../models/product";
 import { connectToDB } from "../mongoose";
 import { scrapeAmazonProduct } from "../scraper";
 import { getAveragePrice, getHighestPrice, getLowestPrice } from "../utils";
@@ -31,6 +31,7 @@ export async function scrapeAndStoreProduct(productUrl: string){
         ...existingProduct.priceHistory,
         { price: scrapedProduct.currentPrice }
       ];
+
       product = {
         ...scrapedProduct,
         priceHistory: updatedPriceHistory,
@@ -39,11 +40,11 @@ export async function scrapeAndStoreProduct(productUrl: string){
         averagePrice: getAveragePrice(updatedPriceHistory),
       }
     }
-
+    // update the product 
     const newProduct = await Product.findOneAndUpdate(
       { url: scrapedProduct.url },
       product,
-      { upsert: true, new: true }
+      { upsert: true, new: true } // upsert: true creates a new product if it doesn't exist
     );
 
     revalidatePath(`/products/${newProduct._id}`);
@@ -52,7 +53,12 @@ export async function scrapeAndStoreProduct(productUrl: string){
   }
 }
 
-export async function getProductById(productId: string) {
+/**
+ * Retrieves a product from a MongoDB database based on its ID.
+ * @param {string} productId - The ID of the product to retrieve from the database.
+ * @returns {Promise<object|null>} - The product object with the matching ID if found in the database, or null if no product is found.
+ */
+export async function getProductById(productId: string){
   try {
     connectToDB();
 
