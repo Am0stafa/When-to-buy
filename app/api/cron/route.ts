@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { getLowestPrice, getHighestPrice, getAveragePrice, getEmailNotifType } from "@/lib/utils";
 import { connectToDB } from "@/lib/mongoose";
-import Product from "@/lib/models/product";
+import Product from "@/lib/models/product.model";
 import { scrapeAmazonProduct } from "@/lib/scraper";
 import { generateEmailBody, sendEmail } from "@/lib/nodemailer";
 

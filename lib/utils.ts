@@ -9,33 +9,28 @@ const Notification = {
 
 const THRESHOLD_PERCENTAGE = 40;
 
-/**
- * Extracts and returns the price from a list of possible elements. for nested data
- * 
- * @param elements - A variable number of elements from which the price needs to be extracted.
- * @returns The extracted price as a string. If no price is found in any of the elements, it returns an empty string.
- */
+// Extracts and returns the price from a list of possible elements.
 export function extractPrice(...elements: any) {
   for (const element of elements) {
     const priceText = element.text().trim();
+
     if(priceText) {
-      const cleanPrice = priceText.replace(/[^\d.]/g, ''); // eliminate non-numeric characters
+      const cleanPrice = priceText.replace(/[^\d.]/g, '');
+
       let firstPrice; 
+
       if (cleanPrice) {
         firstPrice = cleanPrice.match(/\d+\.\d{2}/)?.[0];
       } 
+
       return firstPrice || cleanPrice;
     }
   }
+
   return '';
 }
 
-/**
-  * Extracts the currency symbol from an element.
-  * 
-  * @param element - The element from which the currency symbol needs to be extracted.
-  * @returns The extracted currency symbol as a string. If no currency symbol is found, an empty string is returned.
-*/
+// Extracts and returns the currency symbol from an element.
 export function extractCurrency(element: any) {
   const currencyText = element.text().trim().slice(0, 1);
   return currencyText ? currencyText : "";
@@ -43,11 +38,13 @@ export function extractCurrency(element: any) {
 
 // Extracts description from two possible elements from amazon
 export function extractDescription($: any) {
+  // these are possible elements holding description of the product
   const selectors = [
     ".a-unordered-list .a-list-item",
     ".a-expander-content p",
     // Add more selectors here if needed
   ];
+
   for (const selector of selectors) {
     const elements = $(selector);
     if (elements.length > 0) {
@@ -58,6 +55,7 @@ export function extractDescription($: any) {
       return textContent;
     }
   }
+
   // If no matching elements were found, return an empty string
   return "";
 }

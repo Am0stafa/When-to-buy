@@ -1,36 +1,32 @@
 "use server"
 
 import { revalidatePath } from "next/cache";
-import Product from "../models/product";
+import Product from "../models/product.model";
 import { connectToDB } from "../mongoose";
 import { scrapeAmazonProduct } from "../scraper";
 import { getAveragePrice, getHighestPrice, getLowestPrice } from "../utils";
 import { User } from "@/types";
 import { generateEmailBody, sendEmail } from "../nodemailer";
 
-/**
-  * Scrapes product information from an Amazon product page and stores it in a MongoDB database.
-  * Updates the price history and calculates the lowest, highest, and average prices for the product.
-  * 
-  * @param {string} productUrl - The URL of the Amazon product page to scrape.
-  * @returns {void}
-  * @throws {Error} If failed to create/update product.
-*/
-export async function scrapeAndStoreProduct(productUrl: string){
+export async function scrapeAndStoreProduct(productUrl: string) {
   if(!productUrl) return;
 
   try {
     connectToDB();
+
     const scrapedProduct = await scrapeAmazonProduct(productUrl);
+
     if(!scrapedProduct) return;
+
     let product = scrapedProduct;
+
     const existingProduct = await Product.findOne({ url: scrapedProduct.url });
-    
+
     if(existingProduct) {
       const updatedPriceHistory: any = [
         ...existingProduct.priceHistory,
         { price: scrapedProduct.currentPrice }
-      ];
+      ]
 
       product = {
         ...scrapedProduct,
@@ -40,11 +36,11 @@ export async function scrapeAndStoreProduct(productUrl: string){
         averagePrice: getAveragePrice(updatedPriceHistory),
       }
     }
-    // update the product 
+
     const newProduct = await Product.findOneAndUpdate(
       { url: scrapedProduct.url },
       product,
-      { upsert: true, new: true } // upsert: true creates a new product if it doesn't exist
+      { upsert: true, new: true }
     );
 
     revalidatePath(`/products/${newProduct._id}`);
@@ -55,10 +51,12 @@ export async function scrapeAndStoreProduct(productUrl: string){
 
 /**
  * Retrieves a product from a MongoDB database based on its ID.
+ * 
  * @param {string} productId - The ID of the product to retrieve from the database.
- * @returns {Promise<object|null>} - The product object with the matching ID if found in the database, or null if no product is found.
+ * @returns {object | null} - The retrieved product from the database, or null if no product is found.
  */
-export async function getProductById(productId: string){
+
+export async function getProductById(productId: string) {
   try {
     connectToDB();
 
@@ -72,13 +70,6 @@ export async function getProductById(productId: string){
   }
 }
 
-/**
- * Retrieves all products from the database.
- * @returns {Promise<Array>} An array of all products retrieved from the database.
- * @example
- * const products = await getAllProducts();
- * console.log(products);
- */
 export async function getAllProducts() {
   try {
     connectToDB();
@@ -109,6 +100,7 @@ export async function getSimilarProducts(productId: string) {
   }
 }
 
+// to send emails
 export async function addUserEmailToProduct(productId: string, userEmail: string) {
   try {
     const product = await Product.findById(productId);

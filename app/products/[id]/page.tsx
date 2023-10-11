@@ -1,12 +1,12 @@
 import Modal from "@/components/Modal";
 import PriceInfoCard from "@/components/PriceInfoCard";
 import ProductCard from "@/components/ProductCard";
-import { formatNumber } from "@/lib/utils";
 import { getProductById, getSimilarProducts } from "@/lib/actions"
+import { formatNumber } from "@/lib/utils";
+import { Product } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Product } from "@/types";
 
 type Props = {
   params: { id: string }
@@ -14,14 +14,13 @@ type Props = {
 
 const ProductDetails = async ({ params: { id } }: Props) => {
   const product: Product = await getProductById(id);
-
   if(!product) redirect('/')
-
   const similarProducts = await getSimilarProducts(id);
 
   return (
     <div className="product-container">
       <div className="flex gap-28 xl:flex-row flex-col">
+
         <div className="product-image">
           <Image 
             src={product.image}
@@ -35,6 +34,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
         <div className="flex-1 flex flex-col">
           <div className="flex justify-between items-start gap-5 flex-wrap pb-6">
             <div className="flex flex-col gap-3">
+
               <p className="text-[28px] text-secondary font-semibold">
                 {product.title}
               </p>
@@ -46,6 +46,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
               >
                 Visit Product
               </Link>
+
             </div>
 
             <div className="flex items-center gap-3">
@@ -62,7 +63,8 @@ const ProductDetails = async ({ params: { id } }: Props) => {
                 </p>
               </div>
 
-              <div className="p-2 bg-white-200 rounded-10">
+              <div className="p-2 bg-white-200 rounded-10"> 
+              {/* Bookmaker to be implemented in local storage */}
                 <Image 
                   src="/assets/icons/bookmark.svg"
                   alt="bookmark"
@@ -83,6 +85,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
           </div>
 
           <div className="product-info">
+            
             <div className="flex flex-col gap-2">
               <p className="text-[34px] text-secondary font-bold">
                 {product.currency} {formatNumber(product.currentPrice)}
@@ -94,6 +97,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
 
             <div className="flex flex-col gap-4">
               <div className="flex gap-3">
+
                 <div className="product-stars">
                   <Image 
                     src="/assets/icons/star.svg"
@@ -120,8 +124,9 @@ const ProductDetails = async ({ params: { id } }: Props) => {
               </div>
 
               <p className="text-sm text-black opacity-50">
+                {/* TODO fetch the number of buyers */}
                 <span className="text-primary-green font-semibold">93% </span> of
-                buyers have recommeded this.
+                buyers have recommended this.
               </p>
             </div>
           </div>
@@ -173,7 +178,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
             width={22}
             height={22}
           />
-
+          {/* TODO go to the amazon link */}
           <Link href="/" className="text-base text-white">
             Buy Now
           </Link>

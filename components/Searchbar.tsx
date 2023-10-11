@@ -35,10 +35,8 @@ const Searchbar = () => {
     }
     try {
       setIsLoading(true);
-
       // Scrape the product page
       const product = await scrapeAndStoreProduct(searchPrompt);
-      
     } catch (error) {
       // tost
       console.log(error);
